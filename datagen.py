@@ -1,3 +1,7 @@
+"""
+The purpose of this file is to generate the dataset for training
+"""
+
 from Rhino.Display import *
 import rhinoscriptsyntax as rs
 import scriptcontext as sc
@@ -7,8 +11,11 @@ import pickle
 import math
 import time
 
-currentView = sc.doc.Views.ActiveView
-picSize = Size(320,300)
+active = sc.doc.Views.ActiveView
+topView = sc.doc.Views.Find("Top", True)
+threeDView = sc.doc.Views.Find("Perspective", True)
+
+picSize = Size(80,75)
 baseGuid = "40e3aee1-36f4-4ec4-98a3-d21850bb50fd"
 objectGuids = [
 	"6152f52b-2556-42e1-9a16-1631bb38e311"
@@ -46,6 +53,7 @@ def placeObjectRandomly(objGuid):
 	transformed_obj = transform_object(objGuid, scene_params)
 	
 	SCENE_OBJECTS.append(transformed_obj)
+	return scene_params
 
 def transform_object(obj_id, scene_params):
 	randX, randY, randAngle = scene_params
@@ -69,9 +77,9 @@ def transform_object(obj_id, scene_params):
 	return rs.MoveObject(obj_id, translation)
 
 #return the view as a normalized float array
-def getView():
-		img = RhinoView.CaptureToBitmap(currentView, picSize)
-		# img.Save("test.bmp")
+def getView(view):
+		img = view.CaptureToBitmap(picSize)
+		img.Save("%s.bmp"%view.ToString())
 		arr = [[n for n in range(picSize.Width)] for m in range(picSize.Height)]
 		for y in range(picSize.Height):
 			for x in range(picSize.Width):
@@ -81,9 +89,13 @@ def getView():
 				
 		return arr
 
+def getAllViews():
+	return [getView(threeDView), getView(topView)]
+
 def create_scene():
 	reset_scene()
 	scene_params = placeObjectRandomly(objectGuids[0])
+	print(scene_params)
 	return scene_params
 
 def writeToFile(data, path):
@@ -91,15 +103,18 @@ def writeToFile(data, path):
 		pickle.dump(data, output, pickle.HIGHEST_PROTOCOL)
 
 if __name__ == "__main__":
-	dsetSize = 20
+	dsetSize = 5
 	images = []
 	answers = []
+	plans = []
 	for _ in range(dsetSize):
 		rs.EnableRedraw(False)
 		answers.append(create_scene())
 		rs.EnableRedraw(True)
-		images.append(getView())
+		views = getAllViews()
+		images.append(views[0])
+		plans.append(views[1])
 		#time.sleep(1)
 	
-	writeToFile([images, answers], "dataset/0.pkl")
+	writeToFile([images, answers, plans], "dataset/0.pkl")
 	reset_scene()

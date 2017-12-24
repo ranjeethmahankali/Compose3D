@@ -2,3 +2,8 @@
 *.rhl
 *.3dmbak
 dataset/
+results/
+train_log/
+
+*.bmp
+__pycache__/
