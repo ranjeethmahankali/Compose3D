@@ -49,14 +49,14 @@ def placeObjectRandomly(objGuid):
 	randX = random.random()
 	randY = random.random()
 	
-	scene_params = [randX, randY, randAngle]
+	scene_params = [randAngle, randX, randY]
 	transformed_obj = transform_object(objGuid, scene_params)
 	
 	SCENE_OBJECTS.append(transformed_obj)
 	return scene_params
 
 def transform_object(obj_id, scene_params):
-	randX, randY, randAngle = scene_params
+	randAngle, randX, randY = scene_params
 	#making a copy so that we dont mess with the original object
 	obj_id = rs.CopyObject(obj_id)
 	
@@ -103,7 +103,7 @@ def writeToFile(data, path):
 		pickle.dump(data, output, pickle.HIGHEST_PROTOCOL)
 
 if __name__ == "__main__":
-	dsetSize = 5
+	dsetSize = 10
 	images = []
 	answers = []
 	plans = []

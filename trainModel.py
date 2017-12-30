@@ -12,8 +12,9 @@ with tf.Session() as sess:
     # loadModel(sess, model_save_path[0])
     # loadModel(sess, model_save_path[1])
 
-    cycles = 6000
-    testStep = 40
+    # cycles = 6000
+    cycles = 120
+    testStep = 20
     saveStep = 1500
     log_step = 5
     startTime = time.time()
@@ -32,17 +33,21 @@ with tf.Session() as sess:
             pNum = i % pL
             pBar = '#'*pNum + ' '*(pL - pNum)
 
-            sys.stdout.write('...Training...|%s|-(%s/%s)- %s\r'%(pBar, i, cycles, timer))
+            # sys.stdout.write('...Training...|%s|-(%s/%s)- %s\r'%(pBar, i, cycles, timer))
 
             if i % testStep == 0:
                 testBatch = rhinoDataset.test_batch(batch_size)
-                acc, v = sess.run([accTensor, scene_params], feed_dict={
+                lossVal, acc, v, outvals = sess.run([loss, accTensor, scene_params, output], feed_dict={
                     view_placeholder: testBatch[0],
                     scene_params_placeholder: testBatch[1],
                     keep_prob_placeholder: 1
                 })
                 test_writer.add_summary(summary, i)
-                print('Accuracy: %.2f; Sums: %.2f, %.2f%s'%(acc,v.sum(),testBatch[1].sum(),' '*50))
+                # print(outvals)
+                # print(v)
+                # print(testBatch[1])
+                print('Accuracy: %.2f; Loss: %.2f; Sums: %.2f, %.2f%s'%(acc, lossVal, 
+                        v.sum(),testBatch[1].sum(),' '*50))
         
         # now saving the trained model every 1500 cycles
             if i % saveStep == 0 and i != 0:

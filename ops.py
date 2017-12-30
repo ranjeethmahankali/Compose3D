@@ -33,13 +33,13 @@ def loadModel(sess, savedPath):
 
 # weight variable
 def weightVariable(shape, name):
-    initializer = tf.truncated_normal_initializer(stddev=0.1)
+    initializer = tf.truncated_normal_initializer(stddev=0.001)
     weight = tf.get_variable(name=name, shape=shape, initializer=initializer)
     return weight
 
 # bias variable
 def biasVariable(shape, name):
-    initializer = tf.constant_initializer(0.1)
+    initializer = tf.constant_initializer(0.001)
     bias = tf.get_variable(name=name, shape=shape, initializer=initializer)
     return bias
 
@@ -143,7 +143,7 @@ class dataset:
         return nextFile
     
     # this loads the data from the current file into the self.data
-    def load_data(self, silent = False):
+    def load_data(self, silent = True):
         with open(self.dirPath + self.curFile,'rb') as inp:
             if not silent: print('\nLoading data from %s...'%self.curFile)
             dSet = pickle.load(inp)

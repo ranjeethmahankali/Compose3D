@@ -24,13 +24,14 @@ def sigmoid_loss(m , vTrue):
     #     tf.summary.scalar('l2_loss', l2_loss)
     #     tf.summary.scalar('total_loss', total_loss)
 
-    return cross_entropy
-    # return ce_loss
+    # return cross_entropy
+    return ce_loss
     # return total_loss
 
 # this returns the accuracy tensor
 def accuracy(v, vTrue):
-    correctness = tf.equal(v, vTrue)
+    difference = tf.abs(v-vTrue)
+    correctness = tf.less(difference, 0.05)
     acc_norm = tf.cast(correctness, tf.float32)
     acc = tf.multiply(acc_norm, 100)
 
@@ -72,9 +73,15 @@ def interpreter(view_t, keep_prob):
 
     h = 0
     for i in range(len(weights)):
+        total_layers = len(weights)
         L = view_flat if i == 0 else h
         h = tf.matmul(L, weights[i])+biases[i]
-        h = tf.nn.sigmoid(h) if i == len(weights)-1 else tf.nn.relu(h)
+        if i < 4:
+            h = tf.nn.relu(h)
+        elif i == total_layers - 1:
+            h = tf.nn.sigmoid(h)
+        else:
+            h = tf.nn.tanh(h)
         if i == len(weights)-2:
             h = tf.nn.dropout(h, keep_prob)
         # print(h.get_shape())
@@ -85,9 +92,9 @@ def normalize_output(out):
     # out is of shape [batch_size, 3]
     xDim = tf.shape(out)[0]
     angles_raw = tf.slice(out, [0,0], [xDim,1])
-    print(angles_raw.get_shape())
+    # print(angles_raw.get_shape())
     coords = tf.slice(out, [0,1], [xDim,2])
-    print(coords.get_shape())
+    # print(coords.get_shape())
     angles = tf.floor(angles_raw*4)/4
     return tf.concat([angles, coords], 1)
 
@@ -96,8 +103,10 @@ output = interpreter(view_placeholder, keep_prob_placeholder)
 scene_params = normalize_output(output)
 
 loss = sigmoid_loss(output, scene_params_placeholder)
+# loss = tf.reduce_sum(tf.abs(output - scene_params_placeholder))
 
 optim = tf.train.AdamOptimizer(learning_rate).minimize(loss)
+# optim = tf.train.GradientDescentOptimizer(0.1).minimize(loss)
 accTensor = accuracy(scene_params, scene_params_placeholder)
 
 # this is for the summaries during the training
