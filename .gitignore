@@ -1,6 +1,7 @@
 *.3dm 
 *.rhl
 *.3dmbak
+*.pyc
 dataset/
 results/
 train_log/

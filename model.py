@@ -104,6 +104,7 @@ scene_params = normalize_output(output)
 
 loss = sigmoid_loss(output, scene_params_placeholder)
 # loss = tf.reduce_sum(tf.abs(output - scene_params_placeholder))
+summarize(loss)
 
 optim = tf.train.AdamOptimizer(learning_rate).minimize(loss)
 # optim = tf.train.GradientDescentOptimizer(0.1).minimize(loss)
