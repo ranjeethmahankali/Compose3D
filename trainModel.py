@@ -13,7 +13,7 @@ with tf.Session() as sess:
     # loadModel(sess, model_save_path[1])
 
     # cycles = 6000
-    cycles = 10000
+    cycles = 30000
     testStep = 20
     saveStep = 1500
     log_step = 5
@@ -24,7 +24,7 @@ with tf.Session() as sess:
             _, summary = sess.run([optim, merged], feed_dict={
                 view_placeholder: batch[0],
                 scene_params_placeholder: batch[1],
-                keep_prob_placeholder: 0.8
+                keep_prob_placeholder: 0.7
             })
             if i % log_step == 0: train_writer.add_summary(summary,i)
 
