@@ -31,7 +31,7 @@ def sigmoid_loss(m , vTrue):
 # this returns the accuracy tensor
 def accuracy(v, vTrue):
     difference = tf.abs(v-vTrue)
-    correctness = tf.less(difference, 0.05)
+    correctness = tf.less(difference, 0.1)
     acc_norm = tf.cast(correctness, tf.float32)
     acc = tf.multiply(acc_norm, 100)
 

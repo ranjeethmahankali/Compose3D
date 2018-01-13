@@ -9,3 +9,4 @@ train_log/
 *.bmp
 __pycache__/
 savedModels/
+.vscode/
