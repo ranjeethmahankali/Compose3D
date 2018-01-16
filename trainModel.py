@@ -10,7 +10,7 @@ with tf.Session() as sess:
     shutil.rmtree(log_dir, ignore_errors=True)
     train_writer, test_writer = getSummaryWriters(sess)
     # loadModel(sess, model_save_path[0])
-    # loadModel(sess, model_save_path[1])
+    loadModel(sess, model_save_path[1])
 
     # cycles = 6000
     cycles = 100000
