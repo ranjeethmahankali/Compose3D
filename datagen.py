@@ -116,5 +116,5 @@ if __name__ == "__main__":
 		plans.append(views[1])
 		#time.sleep(1)
 	
-	writeToFile([images, answers, plans], "dataset/0.pkl")
+	writeToFile([images, answers, plans], "dataset2/0.pkl")
 	reset_scene()
